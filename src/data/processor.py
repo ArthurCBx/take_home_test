@@ -131,15 +131,16 @@ class DataProcessor:
 
         # Standardizing column names
         df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_')
+        df.rename(columns={'review_title': 'title'}, inplace=True)
 
         # Converting date columns to datetime format
         df['date'] = pd.to_datetime(df['date'], format='on %d %B %Y')
 
         # Removes duplicates when the same customer comments twice in the same category with the same title
-        df.drop_duplicates(inplace=True,subset=['customer_name','category','review_title'])
+        df.drop_duplicates(inplace=True,subset=['customer_name','category','title'])
 
-        # Parse rating column to float
-        df['rating'] = df['rating'].str.extract('(\d+)').astype(float)
+        # Parse rating column to int64
+        df['rating'] = df['rating'].str.extract('(\d+)').astype("int64")
 
         # Handling missing values in Useful column
         df['useful'].replace('', np.nan, inplace=True)
