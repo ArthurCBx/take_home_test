@@ -93,20 +93,23 @@ class DataProcessor:
             "total_records": len(df),
             "categories": df['category'].value_counts().to_dict() if 'category' in df.columns else {},
             "rating_distribution": df['rating'].value_counts().to_dict() if 'rating' in df.columns else {},
-            "average_rating": df['rating'].mean() if 'rating' in df.columns else None,
+            "average_rating": df['rating'].mean().__round__(3) if 'rating' in df.columns else None,
             "date_range": {
                 "start": df['date'].min().isoformat() if 'date' in df.columns else None,
                 "end": df['date'].max().isoformat() if 'date' in df.columns else None
-            } if 'date' in df.columns else None
-        }
+            } if 'date' in df.columns else None,
+            "comment_length_stats": {pd.Series(df['comments'].str.len()).describe().to_dict() } if 'comments' in df.columns else None,
+            }
         
         return summary
 
     def load_customer_comments(self, filename: str = "customer_comment.csv") -> pd.DataFrame:
-        """
-        Load customer comment dataset.
-        """
-        raise NotImplementedError("You need to implement this method to load your dataset.")
+        # Trying to read the CSV file with utf-8 encoding first, then falling back to latin-1 if it fails.
+        try:
+            df = pd.read_csv(self._data_path / filename, encoding='utf-8' )
+        except UnicodeDecodeError:
+            df = pd.read_csv(self._data_path / filename, encoding='latin-1')
+        return df
     
     def _clean_comments_data(self, df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -125,7 +128,21 @@ class DataProcessor:
         Returns:
             pd.DataFrame: Cleaned DataFrame ready for analysis.
         """
-        raise NotImplementedError(
-            "You need to implement this method to clean your dataset."
-            "Use the sample data creation method as a reference for the expected format."
-        )
+
+        # Standardizing column names
+        df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_')
+
+        # Converting date columns to datetime format
+        df['date'] = pd.to_datetime(df['date'], format='on %d %B %Y')
+
+        # Removes duplicates when the same customer comments twice in the same category with the same title
+        df.drop_duplicates(inplace=True,subset=['customer_name','category','review_title'])
+
+        # Parse rating column to float
+        df['rating'] = df['rating'].str.extract('(\d+)').astype(float)
+
+        # Handling missing values in Useful column
+        df['useful'].replace('', np.nan, inplace=True)
+        df['useful'].fillna('0 people found this helpful yet', inplace=True)
+
+        return df   
