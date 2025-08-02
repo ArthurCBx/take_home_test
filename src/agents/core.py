@@ -44,12 +44,12 @@ class DataAnalysisAgent:
         self._llm_to_use = llm_to_use
         
         # Get the LLM instance
-        self._llm = self._llm_providers[llm_to_use].get_llm()
+        self._llm = self._llm_providers[llm_to_use]
         
         # Initialize tools
-        self.data_stats_tool = DataStatsTool(data_processor)
-        self.sentiment_aggregation_tool = SentimentAggregationTool()
-        self.insight_generation_tool = InsightGenerationTool()
+        self.data_stats_tool = DataStatsTool(data_processor=data_processor)
+        self.sentiment_aggregation_tool = SentimentAggregationTool(llm_provider=self._llm)
+        self.insight_generation_tool = InsightGenerationTool(llm_provider=self._llm)
         
         # Load data and set up tools
         self._setup_tools()

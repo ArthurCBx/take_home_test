@@ -9,7 +9,7 @@ import logging
 import json
 import pandas as pd
 from typing import Dict, Any, Type
-
+from ..data import DataProcessor
 from ..llm.providers import BaseLLMProvider
 
 from langchain_core.tools import BaseTool
@@ -42,10 +42,10 @@ class DataStatsTool(BaseTool):
     description: str = """Calculate statistical metrics for customer comments dataset.
     Use this tool to get basic statistics like count, average length, or word frequency analysis."""
     args_schema: Type[BaseModel] = DataStatsInput
-    
-    def __init__(self, data_processor=None):
-        super().__init__()
-        self.data_processor = data_processor
+    data_processor: DataProcessor 
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self._current_data = None
     
     def set_data(self, data):
@@ -145,10 +145,10 @@ class SentimentAggregationTool(BaseTool):
     description: str = """Aggregate sentiment analysis results across all comments.
     Use this tool to summarize sentiment patterns and distributions."""
     args_schema: Type[BaseModel] = SentimentAggregationInput
+    llm_provider: BaseLLMProvider
     
-    def __init__(self, llm_provider: BaseLLMProvider):
-        super().__init__()
-        self.llm_provider = llm_provider
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self._sentiment_results = None
     
     def set_sentiment_data(self, sentiment_data):
@@ -267,10 +267,10 @@ class InsightGenerationTool(BaseTool):
     description: str = """Generate actionable business insights from customer feedback analysis.
     Use this tool to create recommendations and identify key business opportunities."""
     args_schema: Type[BaseModel] = InsightGenerationInput
-    
-    def __init__(self, llm_provider: BaseLLMProvider):
-        super().__init__()
-        self._llm_provider = llm_provider
+    llm_provider: BaseLLMProvider
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self._analysis_results = None
     
     def set_analysis_results(self, results):

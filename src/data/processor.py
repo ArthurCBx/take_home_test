@@ -143,7 +143,7 @@ class DataProcessor:
         df['rating'] = df['rating'].str.extract('(\d+)').astype("int64")
 
         # Handling missing values in Useful column
-        df['useful'].replace('', np.nan, inplace=True)
-        df['useful'].fillna('0 people found this helpful yet', inplace=True)
+        df['useful'] = df['useful'].replace('', np.nan)
+        df['useful'] = df["useful"].fillna('0 people found this helpful yet')
 
         return df   
