@@ -121,11 +121,12 @@ class DataStatsTool(BaseTool):
                 if "date" not in self._current_data.columns:
                     return {"error": "No date data available for analysis"}
                 date_counts = self._current_data["date"].value_counts()
-                date_stats = {
+                return {
                     "start_date": self._current_data["date"].min().isoformat(),
                     "end_date": self._current_data["date"].max().isoformat(),
                     "most_active_day": {"Date": date_counts.idxmax(),
-                                        "Count": date_counts.max()}
+                                        "Count": date_counts.max()},
+                    "metric": metric,
                 }
             else:
                 return {"error": f"Unknown metric: {metric}"}
@@ -240,7 +241,9 @@ class SentimentAggregationTool(BaseTool):
                 df['week'] = df['date'].dt.to_period('W').apply(lambda r: r.start_time)
 
                 # Grouping by week and sentiment, then calculating mean sentiment score by week
-                weekly_trends = df.groupby('week')['sentiment'].size().unstack(fill_value=0)
+                weekly_trends = df.groupby('week')['sentiment'].value_counts().unstack(fill_value=0)
+                weekly_trends = weekly_trends.to_dict(orient='index')
+
 
                 return {
                     "aggregation_type": aggregation_type,
@@ -265,15 +268,16 @@ class InsightGenerationTool(BaseTool):
     Use this tool to create recommendations and identify key business opportunities."""
     args_schema: Type[BaseModel] = InsightGenerationInput
     
-    def __init__(self):
+    def __init__(self, llm_provider: BaseLLMProvider):
         super().__init__()
+        self._llm_provider = llm_provider
         self._analysis_results = None
     
     def set_analysis_results(self, results):
         """Set the analysis results for insight generation."""
         self._analysis_results = results
     
-    def _run(self, insight_type: str) -> Dict[str, Any]:
+    def _run(self,insight_type: str) -> Dict[str, Any]:
         """
         TODO: Implement insight generation logic.
         
@@ -293,15 +297,30 @@ class InsightGenerationTool(BaseTool):
             return {"error": "No analysis results available"}
         
         # TODO: Intern must implement insight generation
-        if insight_type == "recommendations":
-            raise NotImplementedError("Intern must implement recommendation generation")
-        elif insight_type == "trends":
-            raise NotImplementedError("Intern must implement trend analysis")
-        elif insight_type == "priorities":
-            raise NotImplementedError("Intern must implement priority analysis")
+        if insight_type in ["recommendations", "trends", "priorities"]:
+            prompt = SummaryPrompts.FEEDBACK_SUMMARY.format(
+            data_summary=self._analysis_results.get("data_summary", {}),
+            sentiment_results=self._analysis_results.get("sentiment_analysis", {}),
+            topic_results=self._analysis_results.get("topic_extraction", {})
+        )
+            
+            llm_response = self._llm_provider.generate(prompt)
+            llm_content = llm_response.content
+            llm_response_time = llm_response.response_time
+            llm_response_tokens_used = llm_response.tokens_used
+            return{
+                "insight_type": insight_type,
+                "prompt_used": prompt,
+                "model_used": llm_response.model,
+                "business_report": llm_content,
+                "response_time": llm_response_time,
+                "tokens_used": llm_response_tokens_used
+            }
+
         else:
             return {"error": f"Unknown insight type: {insight_type}"}
     
     async def _arun(self, insight_type: str) -> Dict[str, Any]:
         """Async version of the tool."""
         return self._run(insight_type)
+    
