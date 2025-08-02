@@ -4,7 +4,7 @@ LangChain Tools for Customer Comments Analysis
 This module contains all the tools used by the DataAnalysisAgent for analyzing
 customer feedback data.
 """
-
+from ..prompts.templates import SentimentAnalysisPrompts, TopicExtractionPrompts, SummaryPrompts
 import logging
 from typing import Dict, Any, Type
 
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 # Pydantic models for tool inputs
 class DataStatsInput(BaseModel):
     """Input schema for data statistics tool."""
-    metric: str = Field(description="Type of statistic to calculate: 'count', 'avg_length', 'word_frequency'")
+    metric: str = Field(description="Type of statistic to calculate: 'count', 'avg_length', 'word_frequency', 'rating_distribution', 'category_breakdown', 'date_stats'")
     column: str = Field(default="comment", description="Column name to analyze")
 
 
@@ -72,24 +72,56 @@ class DataStatsTool(BaseTool):
             elif metric == "avg_length":
                 avg_len = self._current_data[column].str.len().mean()
                 return {
-                    "avg_length": round(avg_len, 2), 
+                    "avg_length": round(avg_len, 2),
+                    "median_length": self._current_data[column].str.len().median(),
                     "metric": metric,
                     "message": f"Average comment length is {avg_len:.2f} characters"
                 }
             elif metric == "word_frequency":
                 # Simple word frequency analysis
+                from collections import Counter
                 all_text = " ".join(self._current_data[column].astype(str))
                 words = all_text.lower().split()
-                word_counts = {}
-                for word in words:
-                    word_counts[word] = word_counts.get(word, 0) + 1
-                
-                # Get top 10 words
-                top_words = sorted(word_counts.items(), key=lambda x: x[1], reverse=True)[:10]
+                word_freq = Counter(words).most_common(20)
+                                
+                # Get top 20 words
                 return {
-                    "word_frequency": dict(top_words),
+                    "word_frequency": dict(word_freq),
                     "metric": metric,
-                    "message": "Top 10 most frequent words in customer comments"
+                    "message": "Top 20 most frequent words in customer comments"
+                }
+
+            elif metric == "rating_distribution":
+                # Simple rating distribution analysis
+                if "rating" not in self._current_data.columns:
+                    return {"error": "No rating data available for analysis"}
+                rating_counts = self._current_data["rating"].value_counts().to_dict()
+                return {
+                    "rating_distribution": rating_counts,
+                    "metric": metric,
+                    "message": "Distribution of customer ratings"
+                }
+            
+            elif metric == "category_breakdown":
+                # Category breakdown analysis
+                if "category" not in self._current_data.columns:
+                    return {"error": "No category data available for analysis"}
+                category_counts = self._current_data["category"].value_counts().to_dict()
+                return {
+                    "category_breakdown": category_counts,
+                    "metric": metric,
+                    "message": "Breakdown of customer comments by category"
+                }
+            elif metric == "date_stats":
+                # Date range and most active day information
+                if "date" not in self._current_data.columns:
+                    return {"error": "No date data available for analysis"}
+                date_counts = self._current_data["date"].value_counts()
+                date_stats = {
+                    "start_date": self._current_data["date"].min().isoformat(),
+                    "end_date": self._current_data["date"].max().isoformat(),
+                    "most_active_day": {"Date": date_counts.idxmax(),
+                                        "Count": date_counts.max()}
                 }
             else:
                 return {"error": f"Unknown metric: {metric}"}
@@ -135,6 +167,9 @@ class SentimentAggregationTool(BaseTool):
         """
         if self._sentiment_results is None:
             return {"error": "No sentiment data available"}
+        formatted_prompt = SentimentAnalysisPrompts.BASIC_SENTIMENT.format(
+                feedback=self._sentiment_results
+        )
         
         # TODO: Intern must implement sentiment aggregation
         if aggregation_type == "summary":
