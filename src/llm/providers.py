@@ -42,7 +42,6 @@ class OpenAIProvider(BaseLLMProvider):
     
     def __init__(self, api_key: str, model: str = "gpt-3.5-turbo", max_tokens: int = 1000, temperature: float = 0.7):
         """Initialize OpenAI provider."""
-        self.model = model
         self.llm = ChatOpenAI(
             api_key=api_key,
             model=model,
@@ -73,6 +72,11 @@ class OpenAIProvider(BaseLLMProvider):
             logger.error(f"OpenAI API error: {e}")
             raise
     
+    @property
+    def model(self):
+        """Expose the inner LLM model for LangChain compatibility."""
+        return self.llm
+
     def generate_batch(self, prompts: List[str], system_prompt: Optional[str] = None) -> List[LLMResponse]:
         """Generate responses for a batch of prompts."""
         responses = []
@@ -87,7 +91,6 @@ class GeminiProvider(BaseLLMProvider):
     
     def __init__(self, api_key: str, model: str = "gemini-pro", max_tokens: int = 1000, temperature: float = 0.7):
         """Initialize Gemini provider."""
-        self.model = model
         self.llm = ChatGoogleGenerativeAI(
             google_api_key=api_key,
             model=model,
@@ -95,11 +98,16 @@ class GeminiProvider(BaseLLMProvider):
             temperature=temperature
         )
     
+    @property
+    def model(self):
+        """Expose the inner LLM model for LangChain compatibility."""
+        return self.llm
+
+
     def generate(self, prompt: str, system_prompt: Optional[str] = None) -> LLMResponse:
         """Generate a response from Gemini."""
         start_time = time.time()
         
-        # Gemini handles system prompts differently
         full_prompt = prompt
         if system_prompt:
             full_prompt = f"{system_prompt}\n\n{prompt}"
@@ -117,7 +125,7 @@ class GeminiProvider(BaseLLMProvider):
         except Exception as e:
             logger.error(f"Gemini API error: {e}")
             raise
-    
+
     def generate_batch(self, prompts: List[str], system_prompt: Optional[str] = None) -> List[LLMResponse]:
         """Generate responses for a batch of prompts."""
         responses = []

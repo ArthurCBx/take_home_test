@@ -2,6 +2,7 @@ import argparse
 import logging
 import json
 import os
+import sys
 import time
 from pathlib import Path
 from typing import Dict, Any, Optional
@@ -11,6 +12,8 @@ from src.data.processor import DataProcessor
 from src.llm.providers import OpenAIProvider, GeminiProvider
 from src.agents.core import DataAnalysisAgent
 
+# Handle UTF-8 encoding for console output with emojis
+sys.stdout.reconfigure(encoding='utf-8')
 
 # Configure logging
 logging.basicConfig(

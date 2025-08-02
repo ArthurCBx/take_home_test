@@ -103,7 +103,7 @@ Thought: {agent_scratchpad}
         
         # Create the React Agent
         agent = create_react_agent(
-            llm=self._llm,
+            llm=self._llm.model,
             tools=tools,
             prompt=prompt
         )

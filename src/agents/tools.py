@@ -304,7 +304,7 @@ class InsightGenerationTool(BaseTool):
             topic_results=self._analysis_results.get("topic_extraction", {})
         )
             
-            llm_response = self._llm_provider.generate(prompt)
+            llm_response = self.llm_provider.generate(prompt)
             llm_content = llm_response.content
             llm_response_time = llm_response.response_time
             llm_response_tokens_used = llm_response.tokens_used
