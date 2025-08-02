@@ -9,10 +9,12 @@ import logging
 from typing import Dict, Any
 
 from langchain_core.messages import HumanMessage, AIMessage
-
+from langchain.agents import initialize_agent
+from langchain.agents.agent_types import AgentType
 from .state import AgentState, update_state_with_error
 from .tools import DataStatsTool, SentimentAggregationTool, InsightGenerationTool
 from ..data import DataProcessor
+from ..prompts.templates import SentimentAnalysisPrompts, TopicExtractionPrompts, SummaryPrompts
 
 logger = logging.getLogger(__name__)
 
@@ -28,9 +30,9 @@ class WorkflowNodes:
         
         # Initialize tools
         self.data_stats_tool = DataStatsTool(data_processor)
-        self.sentiment_aggregation_tool = SentimentAggregationTool()
-        self.insight_generation_tool = InsightGenerationTool()
-    
+        self.sentiment_aggregation_tool = SentimentAggregationTool(llm_provider=llm_providers[llm_to_use])
+        self.insight_generation_tool = InsightGenerationTool(llm_provider=llm_providers[llm_to_use])
+
     def load_data(self, state: AgentState) -> AgentState:
         """Load and preprocess customer comments data."""
         try:
@@ -55,27 +57,13 @@ class WorkflowNodes:
     def agent_with_tools(self, state: AgentState) -> AgentState:
         """
         Main agent logic with tool calling capabilities.
-        
-        TODO: Intern should implement this method to:
-        1. Analyze the current state and determine what analysis is needed
-        2. Create appropriate prompts for the LLM
-        3. Handle LLM responses and tool calls
-        4. Manage the conversation flow with tools
-        5. Store results appropriately in the state
         """
         try:
             messages = state["messages"]
             current_step = state.get("current_step", "starting")
             
-            # TODO: Intern must implement the agent logic
-            # This should include:
-            # 1. Determining what analysis to perform based on current step
-            # 2. Creating prompts that encourage tool usage
-            # 3. Calling the LLM with tool descriptions
-            # 4. Processing LLM responses and tool calls
-            
             if current_step == "data_loaded":
-                # Create a prompt for data analysis
+                # Create the prompt for the agent
                 prompt = """You are a data analysis expert. You have access to customer comments data and several tools to analyze it.
 
 Available tools:
@@ -85,21 +73,33 @@ Available tools:
 
 Start by getting basic statistics about the dataset, then proceed with sentiment analysis.
 The data is already loaded and ready for analysis."""
-                
+
+                # Append the initial human message to the conversation
                 message = HumanMessage(content=prompt)
                 messages.append(message)
+
+                # Get the LLM provider based on the configured one
+                llm = self.llm_providers.get(self.llm_to_use)
+                if not llm:
+                    raise ValueError(f"LLM provider '{self.llm_to_use}' not found.")
+
+                # Setting tools for the agent
+                tools = [
+                    self.data_stats_tool,
+                    self.sentiment_aggregation_tool,
+                    self.insight_generation_tool
+                ]
+                llm_with_tools = llm.bind_tools(tools)
                 
-                # TODO: Intern should implement LLM call with tools
-                # This is where the LLM would be called with tool descriptions
-                # and the response would be processed for tool calls
-                
-                # Placeholder response - intern should replace with actual LLM call
-                ai_response = AIMessage(content="I'll analyze the data using the available tools.")
-                messages.append(ai_response)
-                
+                # Run the agent with the prompt
+                agent_response = llm_with_tools.invoke(messages)
+
+                # Append the agent response to messages
+                messages.append(agent_response)
+
+                # Update the state
                 state["current_step"] = "analyzing"
-                
-            state["messages"] = messages
+                state["messages"] = messages
             
         except Exception as e:
             logger.error(f"Error in agent with tools: {e}")
@@ -110,16 +110,27 @@ The data is already loaded and ready for analysis."""
     def generate_final_summary(self, state: AgentState) -> AgentState:
         """
         Generate final summary of all analysis results.
-        
-        TODO: Intern should implement comprehensive summary generation.
         """
+        summary_prompt = SummaryPrompts.FEEDBACK_SUMMARY.format(
+        data_summary=state["analysis_results"]["data_summary"],
+        sentiment_results=state["analysis_results"]["sentiment_analysis"],
+        topic_results=state["analysis_results"]["topic_extraction"]
+    )
+        
         try:
-            # TODO: Intern should implement final summary generation
-            # This should combine all analysis results into a comprehensive summary
-            
+
+            # Get the current llm provider
+            llm = self.llm_providers.get(self.llm_to_use)
+            if not llm:
+                raise ValueError(f"LLM provider '{self.llm_to_use}' not found.")
+
+            # Call the llm with the final prompt
+            final_summary = llm.invoke(summary_prompt).content
+
+            # Store the genereated report in the state
             state["analysis_results"]["final_summary"] = {
                 "status": "completed",
-                "note": "TODO: Intern must implement comprehensive summary generation"
+                "report": final_summary
             }
             state["current_step"] = "completed"
             
@@ -132,23 +143,17 @@ The data is already loaded and ready for analysis."""
     def should_continue_with_tools(self, state: AgentState) -> str:
         """
         Determine if we should continue with tool calling or end the workflow.
-        
-        TODO: Intern should implement logic to:
-        1. Check if the last message contains tool calls
-        2. Determine if more analysis is needed
-        3. Handle maximum tool call limits
         """
         messages = state["messages"]
-        if not messages:
+        
+        MAX_TOOL_CALLS = 5
+
+        if not messages or len(state.get("tool_calls_made", [])) >= MAX_TOOL_CALLS:
+            # End the loop if there are no messages or max tool calls reached
             return "end"
         
         last_message = messages[-1]
         
-        # TODO: Intern should implement proper tool call detection
-        # This is a simplified check - the intern should implement:
-        # - Proper tool call message detection
-        # - Logic for when to stop calling tools
-        # - Error handling for failed tool calls
         
         if hasattr(last_message, 'tool_calls') and last_message.tool_calls:
             return "tools"
