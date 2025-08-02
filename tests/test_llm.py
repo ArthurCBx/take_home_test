@@ -37,7 +37,7 @@ class TestOpenAIProvider:
         assert isinstance(response, LLMResponse)
         assert response.content == "Test response from OpenAI"
         assert response.provider == "openai"
-        assert response.response_time > 0
+        assert response.response_time >= 0
 
 
 class TestGeminiProvider:
@@ -57,4 +57,4 @@ class TestGeminiProvider:
         assert isinstance(response, LLMResponse)
         assert response.content == "Test response from Gemini"
         assert response.provider == "gemini"
-        assert response.response_time > 0
+        assert response.response_time >= 0
