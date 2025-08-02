@@ -6,7 +6,11 @@ customer feedback data.
 """
 from ..prompts.templates import SentimentAnalysisPrompts, TopicExtractionPrompts, SummaryPrompts
 import logging
+import json
+import pandas as pd
 from typing import Dict, Any, Type
+
+from ..llm.providers import BaseLLMProvider
 
 from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field
@@ -141,8 +145,9 @@ class SentimentAggregationTool(BaseTool):
     Use this tool to summarize sentiment patterns and distributions."""
     args_schema: Type[BaseModel] = SentimentAggregationInput
     
-    def __init__(self):
+    def __init__(self, llm_provider: BaseLLMProvider):
         super().__init__()
+        self.llm_provider = llm_provider
         self._sentiment_results = None
     
     def set_sentiment_data(self, sentiment_data):
@@ -167,17 +172,83 @@ class SentimentAggregationTool(BaseTool):
         """
         if self._sentiment_results is None:
             return {"error": "No sentiment data available"}
-        formatted_prompt = SentimentAnalysisPrompts.BASIC_SENTIMENT.format(
-                feedback=self._sentiment_results
-        )
         
         # TODO: Intern must implement sentiment aggregation
         if aggregation_type == "summary":
-            raise NotImplementedError("Intern must implement sentiment summary aggregation")
+            formatted_prompt = SentimentAnalysisPrompts.BASIC_SENTIMENT.format(
+                feedback=str(self._sentiment_results)
+            )
+
+            # Calling the LLM with the formatted prompt and getting infos about the response
+            llm_response = self.llm_provider.generate(formatted_prompt)
+            llm_content = llm_response.content
+            llm_response_time = llm_response.response_time
+            llm_response_tokens_used = llm_response.tokens_used
+
+            try:
+                # Parsing the JSON response from the LLM
+                if "```json" in llm_content:
+                    json_str = llm_content.split("```json")[1].split("```")[0].strip()
+                else:
+                    json_str = llm_content.strip()
+                parsed_response = json.loads(json_str)
+
+                return {
+                    "aggregation_type": aggregation_type,
+                    "prompt_used": formatted_prompt,
+                    "parsed_response": parsed_response,
+                    "model_used": llm_response.model,
+                    "response_time": llm_response_time,
+                    "tokens_used": llm_response_tokens_used,
+                }
+
+            except json.JSONDecodeError:
+                return {"error": "Failed to parse JSON response from LLM",
+                        "raw_response": llm_response}
+
+            
         elif aggregation_type == "distribution":
-            raise NotImplementedError("Intern must implement sentiment distribution calculation")
+
+            # Verifying that sentiment results are in a list format
+            if not isinstance(self._sentiment_results, list):
+                return {"error": "Distribution requires a list of sentiment results."}
+
+            # Getting sentiment distribution from the list of JSON results
+            sentiment_list = [result['sentiment'] for result in self._sentiment_results]
+            sentiment_counts = pd.Series(sentiment_list).value_counts().to_dict()
+
+            return {
+                "sentiment_distribution": sentiment_counts,
+                "aggregation_type": aggregation_type,
+                "message": "Distribution of sentiments across all comments"
+            }
+        
         elif aggregation_type == "trends":
-            raise NotImplementedError("Intern must implement sentiment trend analysis")
+            # Verifying that sentiment results are in a list format
+            if not isinstance(self._sentiment_results, list):
+                return {"error": "Trends require a list of sentiment results."}
+            
+            # Getting sentiment trends from the list of JSON results
+            try:
+                df = pd.DataFrame(self._sentiment_results)
+                if 'date' not in df.columns or 'sentiment' not in df.columns:
+                    return {"error": "Each sentiment entry must include 'date' and 'sentiment'"}
+
+                ## Creating a weekly trend analysis ##
+
+                # Creating a new column for week since start date
+                df['week'] = df['date'].dt.to_period('W').apply(lambda r: r.start_time)
+
+                # Grouping by week and sentiment, then calculating mean sentiment score by week
+                weekly_trends = df.groupby('week')['sentiment'].size().unstack(fill_value=0)
+
+                return {
+                    "aggregation_type": aggregation_type,
+                    "weekly_sentiment_trends": weekly_trends
+                }
+
+            except Exception as e:
+                return {"error": f"Error processing sentiment data: {str(e)}"}
         else:
             return {"error": f"Unknown aggregation type: {aggregation_type}"}
     
