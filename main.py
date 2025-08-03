@@ -66,9 +66,9 @@ class AnalysisRunner:
                     max_tokens=self.config.max_tokens,
                     temperature=self.config.temperature
                 )
-                logger.info("✅ OpenAI provider initialized successfully")
+                logger.info("OpenAI provider initialized successfully")
             except Exception as e:
-                logger.warning(f"❌ Failed to initialize OpenAI provider: {e}")
+                logger.warning(f"Failed to initialize OpenAI provider: {e}")
         
         # Initialize Gemini provider
         if self.config.google_api_key:
@@ -79,9 +79,9 @@ class AnalysisRunner:
                     max_tokens=self.config.max_tokens,
                     temperature=self.config.temperature
                 )
-                logger.info("✅ Gemini provider initialized successfully")
+                logger.info("Gemini provider initialized successfully")
             except Exception as e:
-                logger.warning(f"❌ Failed to initialize Gemini provider: {e}")
+                logger.warning(f"Failed to initialize Gemini provider: {e}")
         
         if not providers:
             raise ValueError("No LLM providers could be initialized. Check your API keys.")
@@ -98,7 +98,7 @@ class AnalysisRunner:
         Returns:
             Dictionary containing all analysis results
         """
-        logger.info("🚀 Starting customer feedback analysis workflow...")
+        logger.info("Starting customer feedback analysis workflow...")
         
         try:
             # Initialize the agent
@@ -110,7 +110,7 @@ class AnalysisRunner:
             )
             
             # Display available tools
-            logger.info("🛠️  Available analysis tools:")
+            logger.info("Available analysis tools:")
             for tool in self.agent.get_available_tools():
                 logger.info(f"   - {tool['name']}: {tool['description'][:60]}...")
             
@@ -127,11 +127,11 @@ class AnalysisRunner:
                 "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
             }
             
-            logger.info(f"✅ Analysis completed in {analysis_time:.2f} seconds")
+            logger.info(f"Analysis completed in {analysis_time:.2f} seconds")
             return results
             
         except Exception as e:
-            logger.error(f"❌ Analysis failed: {e}")
+            logger.error(f"Analysis failed: {e}")
             return {
                 "error": str(e),
                 "status": "failed",
@@ -150,7 +150,7 @@ class AnalysisRunner:
         with open(results_file, 'w') as f:
             json.dump(results, f, indent=2, default=str)
         
-        logger.info(f"📁 Results saved to {results_file}")
+        logger.info(f"Results saved to {results_file}")
         
         # Save human-readable summary if available
         if "analysis_results" in results and "final_summary" in results["analysis_results"]:
@@ -160,39 +160,39 @@ class AnalysisRunner:
                 f.write("=" * 40 + "\n\n")
                 f.write(str(results["analysis_results"]["final_summary"]))
             
-            logger.info(f"📄 Summary saved to {summary_file}")
+            logger.info(f"Summary saved to {summary_file}")
     
     def print_results_summary(self, results: Dict[str, Any]) -> None:
         """Print a formatted summary of results to console."""
         print("\n" + "="*60)
-        print("🎯  CUSTOMER FEEDBACK ANALYSIS RESULTS")
+        print("CUSTOMER FEEDBACK ANALYSIS RESULTS")
         print("="*60)
         
         # Print metadata
         if "metadata" in results:
             metadata = results["metadata"]
-            print(f"📊 Analysis Time: {metadata.get('analysis_time_seconds', 'N/A')} seconds")
-            print(f"🤖 Primary LLM: {metadata.get('primary_llm', 'N/A')}")
-            print(f"🔧 Available Providers: {', '.join(metadata.get('available_providers', []))}")
-            print(f"⏰ Timestamp: {metadata.get('timestamp', 'N/A')}")
+            print(f"Analysis Time: {metadata.get('analysis_time_seconds', 'N/A')} seconds")
+            print(f"Primary LLM: {metadata.get('primary_llm', 'N/A')}")
+            print(f"Available Providers: {', '.join(metadata.get('available_providers', []))}")
+            print(f"Timestamp: {metadata.get('timestamp', 'N/A')}")
         
         # Print key results
         if "analysis_results" in results:
             analysis = results["analysis_results"]
             
             if "data_summary" in analysis:
-                print(f"\n📈 Dataset Summary:")
+                print(f"\nDataset Summary:")
                 summary = analysis["data_summary"]
                 for key, value in summary.items():
                     print(f"   {key}: {value}")
             
             if "final_summary" in analysis:
-                print(f"\n📋 Final Summary:")
+                print(f"\nFinal Summary:")
                 print(f"   {analysis['final_summary']}")
         
         # Print errors if any
         if "error" in results:
-            print(f"\n❌ Error: {results['error']}")
+            print(f"\nError: {results['error']}")
         
         print("\n" + "="*60)
 
@@ -214,11 +214,11 @@ def main():
     
     try:
         # Initialize the analysis runner
-        logger.info("🎬 Initializing AI Analysis System...")
+        logger.info("Initializing AI Analysis System...")
         runner = AnalysisRunner()
         
         # Run main analysis
-        logger.info("🔍 Running customer feedback analysis...")
+        logger.info("Running customer feedback analysis...")
         results = runner.run_data_analysis(use_sample_data=args.demo)
         
         # Print results summary
@@ -228,12 +228,12 @@ def main():
         if args.save_results:
             runner.save_results(results, args.output_dir)
         
-        logger.info("🎉 Analysis completed successfully!")
+        logger.info("Analysis completed successfully!")
         
     except KeyboardInterrupt:
-        logger.info("⏹️  Analysis interrupted by user")
+        logger.info("Analysis interrupted by user")
     except Exception as e:
-        logger.error(f"💥 Fatal error: {e}")
+        logger.error(f"Fatal error: {e}")
         raise
 
 
