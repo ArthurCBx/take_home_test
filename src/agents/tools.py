@@ -21,8 +21,8 @@ logger = logging.getLogger(__name__)
 # Pydantic models for tool inputs
 class DataStatsInput(BaseModel):
     """Input schema for data statistics tool."""
-    metric: str = Field(description="Type of statistic to calculate. Must be one of: 'count', 'avg_length', 'word_frequency', 'rating_distribution', 'category_breakdown', 'date_stats'")
-    column: str = Field(default="comment", description="Column name to analyze for metrics like 'avg_length' or 'word_frequency'. Default is 'comment'.")
+    metric: str = Field(description="The single statistic to calculate. Must be one of: 'count', 'avg_length', 'word_frequency', 'rating_distribution', 'category_breakdown', 'date_stats'")
+    column: str = Field(default="comments", description="Column name to analyze for metrics like 'avg_length' or 'word_frequency'. Default is 'comments'.")
 
 
 class SentimentAggregationInput(BaseModel):
@@ -40,7 +40,9 @@ class DataStatsTool(BaseTool):
     
     name: str = "calculate_data_stats"
     description: str = """Calculate statistical metrics for customer comments dataset.
-    Use this tool to get basic statistics like count, average length, or word frequency analysis."""
+    Available metrics: count, avg_length, word_frequency, rating_distribution, category_breakdown, date_stats.
+    Use metric parameter to specify which statistic to calculate.
+    Use column parameter to specify which column to analyze (default: comments)."""
     args_schema: Type[BaseModel] = DataStatsInput
     data_processor: DataProcessor 
 
@@ -50,9 +52,9 @@ class DataStatsTool(BaseTool):
     
     def set_data(self, data):
         """Set the current dataset for analysis."""
-        self._current_data = data
+        self._current_data = processor.py data
     
-    def _run(self, metric: str, column: Optional[str] = "comment") -> Dict[str, Any]:
+    def _run(self, metric: str, column: str = "comments", **kwargs) -> Dict[str, Any]:
         """
         Calculate statistical metrics for customer comments data.
         
@@ -66,6 +68,16 @@ class DataStatsTool(BaseTool):
         if self._current_data is None:
             return {"error": "No data available for analysis"}
         
+        if metric.startswith('{') and metric.endswith('}'):
+            try:
+                # Parse the JSON string to extract metric and column
+                metric_data = json.loads(metric)
+                metric = metric_data.get("metric", metric)
+                column = metric_data.get("column", column)
+            except json.JSONDecodeError:
+                pass
+        logger.debug(f"Final metric: '{metric}', column: '{column}'")
+
         try:
             if metric == "count":
                 return {
@@ -133,7 +145,7 @@ class DataStatsTool(BaseTool):
         except Exception as e:
             return {"error": f"Error calculating {metric}: {str(e)}"}
     
-    async def _arun(self, metric: str, column: str = "comment") -> Dict[str, Any]:
+    async def _arun(self, metric: str, column: str = "comments") -> Dict[str, Any]:
         """Async version of the tool."""
         return self._run(metric, column)
 
@@ -176,8 +188,9 @@ class SentimentAggregationTool(BaseTool):
         
         # TODO: Intern must implement sentiment aggregation
         if aggregation_type == "summary":
+            formatted_data = json.dumps(self._sentiment_results, indent=2, default=str)
             formatted_prompt = SentimentAnalysisPrompts.BASIC_SENTIMENT.format(
-                feedback=str(self._sentiment_results)
+                feedback=formatted_data
             )
 
             # Calling the LLM with the formatted prompt and getting infos about the response
@@ -189,11 +202,15 @@ class SentimentAggregationTool(BaseTool):
             try:
                 # Parsing the JSON response from the LLM
                 if "```json" in llm_content:
-                    json_str = llm_content.split("```json")[1].split("```")[0].strip()
+                    json_start = llm_content.find("```json") + len("```json")
+                    json_end = llm_content.find("```", json_start)
+                    json_str = llm_content[json_start:json_end].strip()
                 else:
-                    json_str = llm_content.strip()
-                parsed_response = json.loads(json_str)
+                    start = llm_content.find("{")
+                    end = llm_content.rfind("}") + 1
+                    json_str = llm_content[start:end].strip() if start != -1 and end > start else llm_content.strip()
 
+                parsed_response = json.loads(json_str)
                 return {
                     "aggregation_type": aggregation_type,
                     "prompt_used": formatted_prompt,

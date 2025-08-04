@@ -78,7 +78,7 @@ class DataProcessor:
             data.append({
                 "title": f"Sample Comment {i + 1}",
                 "category": category,
-                "comment": comment,
+                "comments": comment,
                 "rating": rating,
                 "date": pd.date_range(start="2023-01-01", end="2024-01-01", periods=500)[i]
             })
@@ -98,7 +98,7 @@ class DataProcessor:
                 "start": df['date'].min().isoformat() if 'date' in df.columns else None,
                 "end": df['date'].max().isoformat() if 'date' in df.columns else None
             } if 'date' in df.columns else None,
-            "comment_length_stats": {pd.Series(df['comments'].str.len()).describe().to_dict() } if 'comments' in df.columns else None,
+            "comment_length_stats": pd.Series(df['comments'].str.len()).describe().to_dict() if 'comments' in df.columns else None,
             }
         
         return summary

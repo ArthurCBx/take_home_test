@@ -36,7 +36,6 @@ class AnalysisRunner:
         self.data_processor = DataProcessor()
         self.llm_providers = self._initialize_llm_providers()
         self.agent = None
-        
     def _load_config(self) -> LLMConfig:
         """Load configuration from environment variables."""
         try:

@@ -69,10 +69,9 @@ class WorkflowNodes:
 You must proceed in the following order:
 1.  First, get the total number of comments by calling the `calculate_data_stats` tool with the metric 'count'.
 2.  Next, get the distribution of ratings by calling the `calculate_data_stats` tool with the metric 'rating_distribution'.
-3.  After gathering these statistics, you must perform sentiment analysis on the entire dataset.
-4.  Finally, after all analysis is complete, call the `generate_insights` tool with the insight_type 'recommendations' to create a final business summary.
+3.  Finally, after you have the statistics, you must generate a final business summary.
 
-The data is already loaded. Begin by calling the `calculate_data_stats` tool as described in step 1."""
+The data is already loaded. Begin by calling the `calculate_data_stats` tool."""
 
                 # Append the initial human message to the conversation
                 message = HumanMessage(content=prompt)
