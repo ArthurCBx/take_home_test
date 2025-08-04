@@ -8,7 +8,7 @@ from ..prompts.templates import SentimentAnalysisPrompts, TopicExtractionPrompts
 import logging
 import json
 import pandas as pd
-from typing import Dict, Any, Type
+from typing import Dict, Any, Type, Optional
 from ..data import DataProcessor
 from ..llm.providers import BaseLLMProvider
 
@@ -21,8 +21,8 @@ logger = logging.getLogger(__name__)
 # Pydantic models for tool inputs
 class DataStatsInput(BaseModel):
     """Input schema for data statistics tool."""
-    metric: str = Field(description="Type of statistic to calculate: 'count', 'avg_length', 'word_frequency', 'rating_distribution', 'category_breakdown', 'date_stats'")
-    column: str = Field(default="comment", description="Column name to analyze")
+    metric: str = Field(description="Type of statistic to calculate. Must be one of: 'count', 'avg_length', 'word_frequency', 'rating_distribution', 'category_breakdown', 'date_stats'")
+    column: str = Field(default="comment", description="Column name to analyze for metrics like 'avg_length' or 'word_frequency'. Default is 'comment'.")
 
 
 class SentimentAggregationInput(BaseModel):
@@ -52,7 +52,7 @@ class DataStatsTool(BaseTool):
         """Set the current dataset for analysis."""
         self._current_data = data
     
-    def _run(self, metric: str, column: str = "comment") -> Dict[str, Any]:
+    def _run(self, metric: str, column: Optional[str] = "comment") -> Dict[str, Any]:
         """
         Calculate statistical metrics for customer comments data.
         
