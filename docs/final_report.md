@@ -1,5 +1,5 @@
 # Results Comparison
-After several hours running and debugging the code, I exhausted of my token quota for both the OpenAI and Gemini free tiers. Due to this limitation, I was unable to generate a full set of results to compare them. However, with the final implementations it is possible to get the data stats with the LLM and generate a final analysis. The sentiment analysis function was not fully tested because an error with the data was occurring in the `SentimentAggregationTool`.
+After several hours of running and debugging the code, I exhausted my token quota for both the OpenAI and Gemini free tiers. Due to this limitation, I was unable to generate a full set of results to compare them. However, with the final implementations it is possible to get the data stats with the LLM and generate a final analysis. The sentiment analysis function was not fully tested because an error with the data was occurring in the `SentimentAggregationTool`.
 
 # Challenges Encountered
 As I didn't have much experience with langchain and its usages understanding the initial code structure was hard. But after some time researching and experimenting with AI assistants I became more familiar with it and gained a comprehension of the project.
