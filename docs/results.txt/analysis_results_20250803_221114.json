@@ -1,0 +1,15 @@
+{
+  "error": "Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}",
+  "status": "failed",
+  "success": false,
+  "analysis_results": {},
+  "metadata": {
+    "analysis_time_seconds": 2.8,
+    "primary_llm": "openai",
+    "available_providers": [
+      "openai",
+      "gemini"
+    ],
+    "timestamp": "2025-08-03 22:11:14"
+  }
+}

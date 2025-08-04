@@ -88,7 +88,7 @@ class AnalysisRunner:
         
         return providers
     
-    def run_data_analysis(self, use_sample_data: bool = False) -> Dict[str, Any]:
+    def run_data_analysis(self, use_sample_data: bool = False, llm_to_use: str = "openai") -> Dict[str, Any]:
         """
         Run the complete data analysis workflow.
         
@@ -106,7 +106,7 @@ class AnalysisRunner:
             self.agent = DataAnalysisAgent(
                 llm_providers=self.llm_providers,
                 data_processor=self.data_processor,
-                llm_to_use=primary_llm
+                llm_to_use=llm_to_use
             )
             
             # Display available tools
@@ -206,7 +206,10 @@ def main():
                        help="Save results to files")
     parser.add_argument("--output-dir", default="results",
                        help="Directory to save results (default: results)")
-    
+    # Added this argument to test gemini provider
+    parser.add_argument("--llm",default="openai",
+                       choices=["openai", "gemini"],
+                       help="LLM provider to use (default: openai)")
     args = parser.parse_args()
     
     # Create logs directory
@@ -219,7 +222,7 @@ def main():
         
         # Run main analysis
         logger.info("Running customer feedback analysis...")
-        results = runner.run_data_analysis(use_sample_data=args.demo)
+        results = runner.run_data_analysis(use_sample_data=args.demo,llm_to_use=args.llm)
         
         # Print results summary
         runner.print_results_summary(results)

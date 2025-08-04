@@ -64,15 +64,14 @@ class WorkflowNodes:
             
             if current_step == "data_loaded":
                 # Create the prompt for the agent
-                prompt = """You are a data analysis expert. You have access to customer comments data and several tools to analyze it.
+                prompt = """You are a data analysis expert. Your task is to analyze a dataset of customer comments.
 
-Available tools:
-- calculate_data_stats: Get statistical metrics about the data
-- aggregate_sentiment: Aggregate sentiment analysis results  
-- generate_insights: Generate business insights from analysis
+You must proceed in the following order:
+1.  First, get the total number of comments by calling the `calculate_data_stats` tool with the metric 'count'.
+2.  Next, get the distribution of ratings by calling the `calculate_data_stats` tool with the metric 'rating_distribution'.
+3.  Finally, after you have the statistics, you must generate a final business summary.
 
-Start by getting basic statistics about the dataset, then proceed with sentiment analysis.
-The data is already loaded and ready for analysis."""
+The data is already loaded. Begin by calling the `calculate_data_stats` tool."""
 
                 # Append the initial human message to the conversation
                 message = HumanMessage(content=prompt)
