@@ -490,3 +490,203 @@
 2025-08-04 10:53:17,966 - src.agents.core - ERROR - Error loading data: module 'src.data.processor' has no attribute '_clean_comments_data'
 2025-08-04 10:53:17,966 - __main__ - ERROR - Analysis failed: module 'src.data.processor' has no attribute '_clean_comments_data'
 2025-08-04 10:53:17,966 - __main__ - INFO - Analysis completed successfully!
+2025-08-04 11:38:32,996 - __main__ - INFO - Initializing AI Analysis System...
+2025-08-04 11:38:33,007 - __main__ - INFO - Gemini provider initialized successfully
+2025-08-04 11:38:33,007 - __main__ - INFO - Running customer feedback analysis...
+2025-08-04 11:38:33,007 - __main__ - INFO - Starting customer feedback analysis workflow...
+2025-08-04 11:38:33,022 - src.agents.core - INFO - Loaded 243 customer comments for analysis
+2025-08-04 11:38:33,023 - __main__ - INFO - Available analysis tools:
+2025-08-04 11:38:33,024 - __main__ - INFO -    - calculate_data_stats: Calculate statistical metrics for customer comments dataset....
+2025-08-04 11:38:33,024 - __main__ - INFO -    - aggregate_sentiment: Aggregate sentiment analysis results across all comments.
+  ...
+2025-08-04 11:38:33,024 - __main__ - INFO -    - generate_insights: Generate actionable business insights from customer feedback...
+2025-08-04 11:38:44,443 - src.agents.core - INFO - Analysis workflow completed successfully
+2025-08-04 11:38:44,444 - __main__ - INFO - Analysis completed in 11.42 seconds
+2025-08-04 11:38:44,445 - __main__ - INFO - Analysis completed successfully!
+2025-08-04 11:55:10,044 - __main__ - INFO - Initializing AI Analysis System...
+2025-08-04 11:55:10,067 - __main__ - INFO - Gemini provider initialized successfully
+2025-08-04 11:55:10,068 - __main__ - INFO - Running customer feedback analysis...
+2025-08-04 11:55:10,068 - __main__ - INFO - Starting customer feedback analysis workflow...
+2025-08-04 11:55:10,084 - src.agents.core - INFO - Loaded 243 customer comments for analysis
+2025-08-04 11:55:10,085 - __main__ - INFO - Available analysis tools:
+2025-08-04 11:55:10,087 - __main__ - INFO -    - calculate_data_stats: Calculate statistical metrics for customer comments dataset....
+2025-08-04 11:55:10,087 - __main__ - INFO -    - aggregate_sentiment: Aggregate sentiment analysis results across all comments.
+  ...
+2025-08-04 11:55:10,087 - __main__ - INFO -    - generate_insights: Generate actionable business insights from customer feedback...
+2025-08-04 11:55:24,820 - src.agents.core - INFO - Analysis workflow completed successfully
+2025-08-04 11:55:24,820 - __main__ - INFO - Analysis completed in 14.73 seconds
+2025-08-04 11:55:24,822 - __main__ - INFO - Analysis completed successfully!
+2025-08-04 11:57:21,550 - __main__ - INFO - Initializing AI Analysis System...
+2025-08-04 11:57:21,561 - __main__ - INFO - Gemini provider initialized successfully
+2025-08-04 11:57:21,561 - __main__ - INFO - Running customer feedback analysis...
+2025-08-04 11:57:21,561 - __main__ - INFO - Starting customer feedback analysis workflow...
+2025-08-04 11:57:21,569 - src.agents.core - INFO - Loaded 243 customer comments for analysis
+2025-08-04 11:57:21,570 - __main__ - INFO - Available analysis tools:
+2025-08-04 11:57:21,571 - __main__ - INFO -    - calculate_data_stats: Calculate statistical metrics for customer comments dataset....
+2025-08-04 11:57:21,572 - __main__ - INFO -    - aggregate_sentiment: Aggregate sentiment analysis results across all comments.
+  ...
+2025-08-04 11:57:21,572 - __main__ - INFO -    - generate_insights: Generate actionable business insights from customer feedback...
+2025-08-04 11:57:35,830 - src.agents.core - INFO - Analysis workflow completed successfully
+2025-08-04 11:57:35,832 - __main__ - INFO - Analysis completed in 14.26 seconds
+2025-08-04 11:57:35,832 - __main__ - INFO - Analysis completed successfully!
+2025-08-04 12:00:41,310 - __main__ - INFO - Initializing AI Analysis System...
+2025-08-04 12:00:41,333 - __main__ - INFO - Gemini provider initialized successfully
+2025-08-04 12:00:41,334 - __main__ - INFO - Running customer feedback analysis...
+2025-08-04 12:00:41,334 - __main__ - INFO - Starting customer feedback analysis workflow...
+2025-08-04 12:00:41,346 - src.agents.core - INFO - Loaded 243 customer comments for analysis
+2025-08-04 12:00:41,347 - __main__ - INFO - Available analysis tools:
+2025-08-04 12:00:41,348 - __main__ - INFO -    - calculate_data_stats: Calculate statistical metrics for customer comments dataset....
+2025-08-04 12:00:41,348 - __main__ - INFO -    - aggregate_sentiment: Aggregate sentiment analysis results across all comments.
+  ...
+2025-08-04 12:00:41,348 - __main__ - INFO -    - generate_insights: Generate actionable business insights from customer feedback...
+2025-08-04 12:00:50,803 - src.agents.core - INFO - Analysis workflow completed successfully
+2025-08-04 12:00:50,803 - __main__ - INFO - Analysis completed in 9.46 seconds
+2025-08-04 12:00:50,804 - __main__ - INFO - Analysis completed successfully!
+2025-08-04 12:35:03,934 - __main__ - INFO - Initializing AI Analysis System...
+2025-08-04 12:35:03,944 - __main__ - INFO - Gemini provider initialized successfully
+2025-08-04 12:35:03,944 - __main__ - INFO - Running customer feedback analysis...
+2025-08-04 12:35:03,944 - __main__ - INFO - Starting customer feedback analysis workflow...
+2025-08-04 12:35:03,954 - src.agents.core - INFO - Loaded 243 customer comments for analysis
+2025-08-04 12:35:03,956 - __main__ - INFO - Available analysis tools:
+2025-08-04 12:35:03,956 - __main__ - INFO -    - calculate_data_stats: Calculate statistical metrics for customer comments dataset....
+2025-08-04 12:35:03,956 - __main__ - INFO -    - aggregate_sentiment: Aggregate sentiment analysis results across all comments.
+  ...
+2025-08-04 12:35:03,956 - __main__ - INFO -    - generate_insights: Generate actionable business insights from customer feedback...
+2025-08-04 12:35:10,090 - src.agents.core - INFO - Analysis workflow completed successfully
+2025-08-04 12:35:10,091 - __main__ - INFO - Analysis completed in 6.13 seconds
+2025-08-04 12:35:10,093 - __main__ - INFO - Analysis completed successfully!
+2025-08-04 12:38:05,869 - __main__ - INFO - Initializing AI Analysis System...
+2025-08-04 12:38:05,880 - __main__ - INFO - Gemini provider initialized successfully
+2025-08-04 12:38:05,880 - __main__ - INFO - Running customer feedback analysis...
+2025-08-04 12:38:05,880 - __main__ - INFO - Starting customer feedback analysis workflow...
+2025-08-04 12:38:05,892 - src.agents.core - ERROR - Error loading data: 'key of type tuple not found and not a MultiIndex'
+2025-08-04 12:38:05,893 - __main__ - ERROR - Analysis failed: 'key of type tuple not found and not a MultiIndex'
+2025-08-04 12:38:05,893 - __main__ - INFO - Analysis completed successfully!
+2025-08-04 12:39:39,245 - __main__ - INFO - Initializing AI Analysis System...
+2025-08-04 12:39:39,257 - __main__ - INFO - Gemini provider initialized successfully
+2025-08-04 12:39:39,257 - __main__ - INFO - Running customer feedback analysis...
+2025-08-04 12:39:39,257 - __main__ - INFO - Starting customer feedback analysis workflow...
+2025-08-04 12:39:39,271 - src.agents.core - ERROR - Error loading data: module 'src.prompts.templates' has no attribute 'BASIC_SENTIMENT'
+2025-08-04 12:39:39,271 - __main__ - ERROR - Analysis failed: module 'src.prompts.templates' has no attribute 'BASIC_SENTIMENT'
+2025-08-04 12:39:39,272 - __main__ - INFO - Analysis completed successfully!
+2025-08-04 12:40:10,291 - __main__ - INFO - Initializing AI Analysis System...
+2025-08-04 12:40:10,304 - __main__ - INFO - Gemini provider initialized successfully
+2025-08-04 12:40:10,304 - __main__ - INFO - Running customer feedback analysis...
+2025-08-04 12:40:10,304 - __main__ - INFO - Starting customer feedback analysis workflow...
+2025-08-04 12:40:27,214 - langchain_google_genai.chat_models - WARNING - Retrying langchain_google_genai.chat_models._chat_with_retry.<locals>._chat_with_retry in 2.0 seconds as it raised ResourceExhausted: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerMinutePerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.5-flash-lite"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+  quota_value: 15
+}
+, links {
+  description: "Learn more about Gemini API quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, retry_delay {
+  seconds: 34
+}
+].
+2025-08-04 12:40:29,419 - src.llm.providers - ERROR - Gemini API error: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerMinutePerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.5-flash-lite"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+  quota_value: 15
+}
+, links {
+  description: "Learn more about Gemini API quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, retry_delay {
+  seconds: 32
+}
+]
+2025-08-04 12:40:29,422 - src.agents.core - ERROR - Error loading data: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerMinutePerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.5-flash-lite"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+  quota_value: 15
+}
+, links {
+  description: "Learn more about Gemini API quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, retry_delay {
+  seconds: 32
+}
+]
+2025-08-04 12:40:29,424 - __main__ - ERROR - Analysis failed: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerMinutePerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.5-flash-lite"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+  quota_value: 15
+}
+, links {
+  description: "Learn more about Gemini API quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, retry_delay {
+  seconds: 32
+}
+]
+2025-08-04 12:40:29,429 - __main__ - INFO - Analysis completed successfully!
+2025-08-04 12:41:13,640 - __main__ - INFO - Initializing AI Analysis System...
+2025-08-04 12:41:13,650 - __main__ - INFO - Gemini provider initialized successfully
+2025-08-04 12:41:13,650 - __main__ - INFO - Running customer feedback analysis...
+2025-08-04 12:41:13,651 - __main__ - INFO - Starting customer feedback analysis workflow...
+2025-08-04 12:41:13,651 - __main__ - ERROR - Analysis failed: 'openai'
+2025-08-04 12:41:13,651 - __main__ - INFO - Analysis completed successfully!
+2025-08-04 12:41:25,705 - __main__ - INFO - Initializing AI Analysis System...
+2025-08-04 12:41:25,715 - __main__ - INFO - Gemini provider initialized successfully
+2025-08-04 12:41:25,715 - __main__ - INFO - Running customer feedback analysis...
+2025-08-04 12:41:25,715 - __main__ - INFO - Starting customer feedback analysis workflow...
+2025-08-04 12:41:25,715 - __main__ - ERROR - Analysis failed: 'openai'
+2025-08-04 12:41:25,716 - __main__ - INFO - Analysis completed successfully!
+2025-08-04 12:42:18,006 - __main__ - INFO - Initializing AI Analysis System...
+2025-08-04 12:42:18,017 - __main__ - INFO - Gemini provider initialized successfully
+2025-08-04 12:42:18,018 - __main__ - INFO - Running customer feedback analysis...
+2025-08-04 12:42:18,018 - __main__ - INFO - Starting customer feedback analysis workflow...
+2025-08-04 12:42:18,018 - __main__ - ERROR - Analysis failed: 'openai'
+2025-08-04 12:42:18,018 - __main__ - INFO - Analysis completed successfully!
+2025-08-04 12:43:55,351 - __main__ - INFO - Initializing AI Analysis System...
+2025-08-04 12:43:56,800 - __main__ - INFO - OpenAI provider initialized successfully
+2025-08-04 12:43:56,812 - __main__ - INFO - Gemini provider initialized successfully
+2025-08-04 12:43:56,812 - __main__ - INFO - Running customer feedback analysis...
+2025-08-04 12:43:56,812 - __main__ - INFO - Starting customer feedback analysis workflow...
+2025-08-04 12:43:58,217 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-08-04 12:43:58,217 - openai._base_client - INFO - Retrying request to /chat/completions in 0.470817 seconds
+2025-08-04 12:43:59,446 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-08-04 12:43:59,448 - openai._base_client - INFO - Retrying request to /chat/completions in 0.996090 seconds
+2025-08-04 12:44:00,613 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-08-04 12:44:00,617 - src.llm.providers - ERROR - OpenAI API error: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+2025-08-04 12:44:00,618 - src.agents.core - ERROR - Error loading data: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+2025-08-04 12:44:00,618 - __main__ - ERROR - Analysis failed: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+2025-08-04 12:44:00,619 - __main__ - INFO - Analysis completed successfully!

@@ -27,7 +27,7 @@ class DataStatsInput(BaseModel):
 
 class SentimentAggregationInput(BaseModel):
     """Input schema for sentiment aggregation tool."""
-    aggregation_type: str = Field(description="Type of aggregation: 'summary', 'distribution', 'trends'")
+    aggregation_type: str = Field(description="Type of aggregation must be one of: 'summary', 'distribution', 'trends'")
 
 
 class InsightGenerationInput(BaseModel):
@@ -52,8 +52,8 @@ class DataStatsTool(BaseTool):
     
     def set_data(self, data):
         """Set the current dataset for analysis."""
-        self._current_data = processor.py data
-    
+        self._current_data = data
+
     def _run(self, metric: str, column: str = "comments", **kwargs) -> Dict[str, Any]:
         """
         Calculate statistical metrics for customer comments data.
@@ -155,7 +155,8 @@ class SentimentAggregationTool(BaseTool):
     
     name: str = "aggregate_sentiment" 
     description: str = """Aggregate sentiment analysis results across all comments.
-    Use this tool to summarize sentiment patterns and distributions."""
+    Use this tool to summarize sentiment patterns and distributions.
+    One of the following aggregation types must be specified, spelled exactly: 'summary', 'distribution', 'trends'."""
     args_schema: Type[BaseModel] = SentimentAggregationInput
     llm_provider: BaseLLMProvider
     
@@ -169,24 +170,11 @@ class SentimentAggregationTool(BaseTool):
     
     def _run(self, aggregation_type: str) -> Dict[str, Any]:
         """
-        TODO: Implement sentiment aggregation logic.
-        
-        The intern should implement:
-        1. Process individual sentiment scores/labels
-        2. Calculate overall sentiment distribution  
-        3. Identify sentiment trends or patterns
-        4. Generate summary statistics
-        
-        Args:
-            aggregation_type: How to aggregate the data
-            
-        Returns:
-            Dict with aggregated sentiment insights
-        """
+        Aggregate sentiment analysis results based on the specified type.
+        """       
         if self._sentiment_results is None:
             return {"error": "No sentiment data available"}
         
-        # TODO: Intern must implement sentiment aggregation
         if aggregation_type == "summary":
             formatted_data = json.dumps(self._sentiment_results, indent=2, default=str)
             formatted_prompt = SentimentAnalysisPrompts.BASIC_SENTIMENT.format(
@@ -254,7 +242,7 @@ class SentimentAggregationTool(BaseTool):
 
                 ## Creating a weekly trend analysis ##
 
-                # Creating a new column for week since start date
+                # Creating a new column for week since start date of the dataset
                 df['week'] = df['date'].dt.to_period('W').apply(lambda r: r.start_time)
 
                 # Grouping by week and sentiment, then calculating mean sentiment score by week
@@ -271,7 +259,7 @@ class SentimentAggregationTool(BaseTool):
                 return {"error": f"Error processing sentiment data: {str(e)}"}
         else:
             return {"error": f"Unknown aggregation type: {aggregation_type}"}
-    
+        
     async def _arun(self, aggregation_type: str) -> Dict[str, Any]:
         """Async version of the tool."""
         return self._run(aggregation_type)
@@ -295,15 +283,7 @@ class InsightGenerationTool(BaseTool):
         self._analysis_results = results
     
     def _run(self,insight_type: str) -> Dict[str, Any]:
-        """
-        TODO: Implement insight generation logic.
-        
-        The intern should implement:
-        1. Analyze patterns across sentiment, topics, and statistics
-        2. Identify key business opportunities or issues
-        3. Generate actionable recommendations
-        4. Prioritize findings by impact/importance
-        
+        """              
         Args:
             insight_type: Type of insights to focus on
             

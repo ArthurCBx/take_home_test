@@ -109,8 +109,8 @@ class DataProcessor:
             df = pd.read_csv(self._data_path / filename, encoding='utf-8' )
         except UnicodeDecodeError:
             df = pd.read_csv(self._data_path / filename, encoding='latin-1')
-        return df
-    
+        cleaned_df = self._clean_comments_data(df)
+        return cleaned_df
     def _clean_comments_data(self, df: pd.DataFrame) -> pd.DataFrame:
         """
         Clean and preprocess the comments data.
@@ -142,7 +142,7 @@ class DataProcessor:
         # Parse rating column to int64
         df['rating'] = df['rating'].str.extract('(\d+)').astype("int64")
 
-        # Handling missing values in Useful column
+        # Handling missing values in useful column
         df['useful'] = df['useful'].replace('', np.nan)
         df['useful'] = df["useful"].fillna('0 people found this helpful yet')
 

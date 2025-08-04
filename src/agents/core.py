@@ -1,13 +1,14 @@
 import logging
+import json
 from typing import Dict, Any
 
 from langchain.agents import create_react_agent, AgentExecutor
 from langchain_core.prompts import PromptTemplate
 from langchain_core.tools import BaseTool
-
 from .tools import DataStatsTool, SentimentAggregationTool, InsightGenerationTool
 from ..llm import BaseLLMProvider
 from ..data import DataProcessor
+from ..prompts import templates
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +63,7 @@ class DataAnalysisAgent:
         try:
             df = self._data_processor.load_customer_comments()
             self.data_stats_tool.set_data(df)
+            self.run_sentiment_analysis() # Run sentiment analysis on loaded data
             logger.info(f"Loaded {len(df)} customer comments for analysis")
         except Exception as e:
             logger.error(f"Error loading data: {e}")
@@ -189,3 +191,40 @@ Thought: {agent_scratchpad}
             }
             for tool in tools
         ]
+    def run_sentiment_analysis(self):
+        """
+        Run sentiment analysis on all comments using the LLM and set results for aggregation.
+        Get the data ready for sentiment analysis and set it in the sentiment aggregation tool.
+        """
+        df = self._data_processor.load_customer_comments()
+        sentiment_results = []
+        for idx, row in df.iterrows():
+            data = [row['title'], row['comments'], row['rating']]
+            prompt = templates.SentimentAnalysisPrompts.BASIC_SENTIMENT.template.format(feedback=data)
+            llm_response = self._llm.generate(prompt)
+            llm_content = llm_response.content
+
+            # Parse the JSON from the LLM response
+            try:
+                start = llm_content.find('{')
+                end = llm_content.rfind('}') + 1
+                json_str = llm_content[start:end]
+                sentiment_data = json.loads(json_str)
+            except Exception:
+                sentiment_data = {"sentiment": "unknown", "confidence": 0.0, "reasoning": "Could not parse", "key_emotions": []}
+
+            sentiment_results.append({
+                "comment_id": idx,
+                "title": data[0],
+                "comment": data[1],
+                "sentiment": sentiment_data.get("sentiment", "unknown"),
+                "confidence": sentiment_data.get("confidence", 0.0),
+                "reasoning": sentiment_data.get("reasoning", ""),
+                "key_emotions": sentiment_data.get("key_emotions", []),
+                "date": row.get("date"),
+                "category": row.get("category"),
+                "rating": row.get("rating")
+            })
+
+        # Set the sentiment results for aggregation
+        self.sentiment_aggregation_tool.set_sentiment_data(sentiment_results)
